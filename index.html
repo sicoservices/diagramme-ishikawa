@@ -109,12 +109,12 @@
   <div class="header-info">
     <div class="info-fields">
       <label>Numéro de FNC :</label>
-      <input type="text" id="fncNumber" placeholder="Ex. : SS-FNC-001">
+      <input type="text" id="fncNumber" placeholder="Ex. : FNC-2024-001">
 
       <label>Numéro d'affaire :</label>
-      <input type="text" id="affairNumber" placeholder="Ex. : SICO-2025-AF0001">
+      <input type="text" id="affairNumber" placeholder="Ex. : AFF-2024-XYZ">
     </div>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQCAMAAADQmiixAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAARnQU1BAACxjwv8YQUAAAGpUExURUdwTz8/P0BAQH9/f3l5eWZmZnR0dE1NTUpKSmRkZGFhYVdXV1ZWVmlpaUVFRW1tbVlZWVVVVX19fXh4eEJCQkpKSllZWQ8PD0BAQD4+PnBwcHl5eWxsbGxsbEJCQmhqampqakxMTGJiYm1tbVVVVXt7e0dHR2VlZWJiYmhpaEhISExMTGdnZ3JycmhoaHZ2dnZ2dmRkZFNTU1BQUEhISEpKSkVFRXt7e0lJSU1NTUhISG1tbWFhYVNNTUJCQmFhYVRUVGRkZF1dXVdXV1lZWUpKSk1NTU5OTlJSUlZWVmhoaHZ2dnFxcV5eXmpqamhpaWNjY2JiYlhYWHt7e2ZmZlNTU1JSUlRUVGtra2xsbG5ubnFxcXV1dXp6emdnZ2FhYXd3d1tbW2VlZWdnZ2pqamZmZmpqakpKSlxcXFtbW3BwcHJycmVlZWZmZm1tbXZ2dnt7e0VFRUlJSVFRUUtLS1ZWVmpqamlpaXNzc3Z2dmNjY2hoaHNzc3l5eWRkZGxsbHR0dHd3d3x8fICAgIWFhYmJiY6OjoxMTE5OTnR0dHx8fKioqD09PQAAAAKcEhZcwAADsQAAA7EAZUrDhsAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAWJLR0QB/wIt3gAAAAlwSFlzAAALEgAACxIB0t1+/AAAAGdJREFUeNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwKwTYQABVPeo5AAAAABJRU5ErkJggg==" alt="Logo de l'entreprise" class="logo" id="companyLogo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQCAMAAADQmiixAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAARnQU1BAACxjwv8YQUAAAGpUExURUdwTz8/P0BAQH9/f3l5eWZmZnR0dE1NTUpKSmRkZGFhYVdXV1ZWVmlpaUVFRW1tbVlZWVVVVX19fXh4eEJCQkpKSllZWQ8PD0BAQD4+PnBwcHl5eWxsbGxsbEJCQmhqampqakxMTGJiYm1tbVVVVXt7e0dHR2VlZWJiYmhpaEhISExMTGdnZ3JycmhoaHZ2dnZ2dmRkZFNTU1BQUEhISEpKSkVFRXt7e0lJSU1NTUhISG1tbWFhYVNNTUJCQmFhYVRUVGRkZF1dXVdXV1lZWUpKSk1NTU5OTlJSUlZWVmhoaHZ2dnFxcV5eXmpqamhpaWNjY2JiYlhYWHt7e2ZmZlNTU1JSUlRUVGtra2xsbG5ubnFxcXV1dXp6emdnZ2FhYXd3d1tbW2VlZWdnZ2pqamZmZmpqakpKSlxcXFtbW3BwcHJycmVlZWZmZm1tbXZ2dnt7e0VFRUlJSVFRUUtLS1ZWVmpqamlpaXNzc3Z2dmNjY2hoaHNzc3l5eWRkZGxsbHR0dHd3d3x8fICAgIWFhYmJiY6OjoxMTE5OTnR0dHx8fKioqD09PQAAAAKcEhZcwAADsQAAA7EAZUrDhsAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAWJLR0QB/wIt3gAAAAlwSFlzAAALEgAACxIB0t1+/AAAAGdJREFUeNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwKwTYQABVPeo5AAAAABJRU5ErkJggg==" alt="Logo de l'entreprise" class="logo">
   </div>
 
   <h1>Diagramme d'Ishikawa (5M) - Optimisé pour Notion</h1>
@@ -152,6 +152,7 @@
 
   <script>
     function parseCauses(input) {
+      if (!input.trim()) return [];
       return input.split(',').map(entry => {
         const [main, subs] = entry.split(':').map(item => item.trim());
         const subCauses = subs ? subs.split(';').map(sub => sub.trim()) : [];
@@ -165,7 +166,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const fncNumber = document.getElementById('fncNumber').value || 'FNC: N/A';
-      const affairNumber = document.getElementById('affairNumber').value || "Affaire: N/A";
+      const affairNumber = document.getElementById('affairNumber').value || 'Affaire: N/A';
       const mainCause = document.getElementById('mainCause').value || 'Problème';
       const categories = {
         "Main-d'œuvre": parseCauses(document.getElementById('man').value),
@@ -186,75 +187,66 @@
 
       ctx.font = `${fontSize}px Arial`;
       ctx.lineWidth = 2;
-
-      ctx.textAlign = 'left';
       ctx.fillStyle = '#000';
+      ctx.textAlign = 'left';
       ctx.fillText(fncNumber, spineStartX, 40);
       ctx.fillText(affairNumber, spineStartX, 60);
 
-      const logoImage = new Image();
-      logoImage.src = document.getElementById('companyLogo').src;
-      logoImage.onload = () => {
-        ctx.drawImage(logoImage, spineEndX - 100, 10, 90, 50);
+      ctx.beginPath();
+      ctx.moveTo(spineStartX, spineY);
+      ctx.lineTo(spineEndX, spineY);
+      ctx.stroke();
+
+      ctx.fillText(mainCause, spineEndX + 10, spineY + 5);
+
+      const categoryKeys = Object.keys(categories);
+      const xPositions = [300, 550, 800, 1050, 1300];
+      const offsets = [-categorySpacing * 1.5, categorySpacing * 1.3, -categorySpacing, categorySpacing, -categorySpacing / 1.2];
+
+      categoryKeys.forEach((category, i) => {
+        const x = xPositions[i];
+        const yOffset = offsets[i];
+        const baseY = spineY + yOffset;
+
+        ctx.strokeStyle = colors[i];
+        ctx.fillStyle = colors[i];
 
         ctx.beginPath();
-        ctx.moveTo(spineStartX, spineY);
-        ctx.lineTo(spineEndX, spineY);
+        ctx.moveTo(x, spineY);
+        ctx.lineTo(x, baseY);
         ctx.stroke();
 
-        ctx.fillText(mainCause, spineEndX + 10, spineY + 5);
+        ctx.textAlign = 'center';
+        ctx.fillText(category, x, baseY - (yOffset > 0 ? -25 : 25));
 
-        const categoryKeys = Object.keys(categories);
-        const xPositions = [300, 550, 800, 1050, 1300];
-        const offsets = [-categorySpacing * 1.5, categorySpacing * 1.3, -categorySpacing, categorySpacing, -categorySpacing / 1.2];
-
-        categoryKeys.forEach((category, i) => {
-          const x = xPositions[i];
-          const yOffset = offsets[i];
-          const baseY = spineY + yOffset;
-
-          ctx.strokeStyle = colors[i];
-          ctx.fillStyle = colors[i];
+        categories[category].forEach((cause, idx) => {
+          const causeY = baseY + (yOffset > 0 ? causeSpacing * (idx + 1) : -causeSpacing * (idx + 1));
 
           ctx.beginPath();
-          ctx.moveTo(x, spineY);
-          ctx.lineTo(x, baseY);
+          ctx.moveTo(x, baseY);
+          ctx.lineTo(x + 150, causeY);
           ctx.stroke();
 
-          ctx.textAlign = 'center';
-          ctx.fillText(category, x, baseY - (yOffset > 0 ? -25 : 25));
+          ctx.textAlign = 'left';
+          ctx.fillText(cause.main, x + 160, causeY + 5);
 
-          categories[category].forEach((cause, idx) => {
-            const causeY = baseY + (yOffset > 0 ? causeSpacing * (idx + 1) : -causeSpacing * (idx + 1));
+          cause.subCauses.forEach((subCause, subIdx) => {
+            const subY = causeY + subCauseSpacing * (subIdx + 1);
 
             ctx.beginPath();
-            ctx.moveTo(x, baseY);
-            ctx.lineTo(x + 150, causeY);
+            ctx.moveTo(x + 150, causeY);
+            ctx.lineTo(x + 150, subY);
+            ctx.lineTo(x + 280, subY);
             ctx.stroke();
 
-            ctx.textAlign = 'left';
-            ctx.fillText(cause.main, x + 160, causeY + 5);
-
-            cause.subCauses.forEach((subCause, subIdx) => {
-              const subY = causeY + (subCauseSpacing * (subIdx + 1));
-
-              ctx.beginPath();
-              ctx.moveTo(x + 150, causeY);
-              ctx.lineTo(x + 150, subY);
-              ctx.lineTo(x + 280, subY);
-              ctx.stroke();
-
-              ctx.fillText(subCause, x + 285, subY + 5);
-            });
+            ctx.fillText(subCause, x + 285, subY + 5);
           });
         });
-      };
+      });
     }
 
     function exportDiagramPNG() {
-      html2canvas(document.getElementById('fishboneCanvas'), {
-        useCORS: true
-      }).then(canvasImage => {
+      html2canvas(document.getElementById('fishboneCanvas')).then(canvasImage => {
         const link = document.createElement('a');
         link.download = 'diagramme_ishikawa.png';
         link.href = canvasImage.toDataURL('image/png');
@@ -263,9 +255,7 @@
     }
 
     async function exportDiagramPDF() {
-      html2canvas(document.getElementById('fishboneCanvas'), {
-        useCORS: true
-      }).then(canvasImage => {
+      html2canvas(document.getElementById('fishboneCanvas')).then(canvasImage => {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('l', 'mm', 'a4');
         const imgData = canvasImage.toDataURL('image/png');
