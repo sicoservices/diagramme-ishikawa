@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modèle Interactif - Diagramme d'Ishikawa (5M) - Version Optimisée avec Export Fonctionnel</title>
+  <title>Modèle Interactif - Diagramme d'Ishikawa (5M) - Version avec Logo et Informations</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,6 +14,24 @@
     h1 {
       text-align: center;
       margin-bottom: 10px;
+    }
+
+    .header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      height: 80px;
+      object-fit: contain;
+    }
+
+    .info-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
 
     .diagram-container {
@@ -39,13 +57,16 @@
       font-weight: bold;
     }
 
-    textarea {
+    textarea, input[type="text"] {
       width: 100%;
-      height: 70px;
       border-radius: 5px;
       border: 1px solid #ccc;
       padding: 8px;
       resize: vertical;
+    }
+
+    textarea {
+      height: 70px;
     }
 
     button {
@@ -80,8 +101,19 @@
   </style>
 </head>
 <body>
-  <h1>Diagramme d'Ishikawa (5M) - Version Optimisée avec Export Fonctionnel</h1>
-  <p style="text-align:center;">Remplissez les champs ci-dessous. Format : "Cause principale: Sous-cause 1; Sous-cause 2". Les sous-causes apparaissent verticalement sous la cause principale.</p>
+  <div class="header-info">
+    <div class="info-fields">
+      <label>Numéro de FNC :</label>
+      <input type="text" id="fncNumber" placeholder="Ex. : SS-FNC-001">
+
+      <label>Numéro d'affaire :</label>
+      <input type="text" id="affairNumber" placeholder="Ex. : SICO-2025-AF0001">
+    </div>
+    <img src="/mnt/data/SICO fond clair.JPG" alt="Logo de l'entreprise" class="logo" id="companyLogo">
+  </div>
+
+  <h1>Diagramme d'Ishikawa (5M) - Version avec Logo et Informations</h1>
+  <p style="text-align:center;">Remplissez les champs ci-dessous. Format : "Cause principale: Sous-cause 1; Sous-cause 2".</p>
 
   <div class="diagram-container">
     <div class="input-container">
@@ -107,10 +139,9 @@
     <button onclick="drawDiagram()">Générer le diagramme</button>
     <button class="export-btn" onclick="exportDiagramPNG()">Exporter en PNG</button>
     <button class="export-btn" onclick="exportDiagramPDF()">Exporter en PDF</button>
-    <canvas id="fishboneCanvas" width="1600" height="1000"></canvas>
+    <canvas id="fishboneCanvas" width="1600" height="1100"></canvas>
   </div>
 
-  <!-- Ajout de jsPDF et html2canvas pour l'export PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -128,6 +159,8 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      const fncNumber = document.getElementById('fncNumber').value || 'FNC: N/A';
+      const affairNumber = document.getElementById('affairNumber').value || "Affaire: N/A";
       const mainCause = document.getElementById('mainCause').value || 'Problème';
       const categories = {
         "Main-d'œuvre": parseCauses(document.getElementById('man').value),
@@ -139,7 +172,7 @@
 
       const spineStartX = 200;
       const spineEndX = 1350;
-      const spineY = 500;
+      const spineY = 550;
       const categorySpacing = 170;
       const causeSpacing = 70;
       const subCauseSpacing = 30;
@@ -148,6 +181,20 @@
 
       ctx.font = `${fontSize}px Arial`;
       ctx.lineWidth = 2;
+
+      // Informations (FNC, Numéro d'affaire)
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#000';
+      ctx.fillText(fncNumber, spineStartX, 40);
+      ctx.fillText(affairNumber, spineStartX, 60);
+
+      // Affichage du logo
+      const logo = document.getElementById('companyLogo');
+      const logoImage = new Image();
+      logoImage.src = logo.src;
+      logoImage.onload = () => {
+        ctx.drawImage(logoImage, spineEndX - 120, 10, 100, 60);
+      };
 
       // Colonne vertébrale principale
       ctx.beginPath();
@@ -215,15 +262,12 @@
 
     async function exportDiagramPDF() {
       const canvas = document.getElementById('fishboneCanvas');
-
       html2canvas(canvas).then(canvasImage => {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('l', 'mm', 'a4');
         const imgData = canvasImage.toDataURL('image/png');
-
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvasImage.height * pdfWidth) / canvasImage.width;
-
         pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
         pdf.save('diagramme_ishikawa.pdf');
       });
