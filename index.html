@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modèle Interactif - Diagramme d'Ishikawa (5M) - Optimisé pour Notion</title>
+  <title>Modèle Interactif - Diagramme d'Ishikawa (5M) - Optimisé pour Notion - rev00</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -101,7 +101,8 @@
       background-color: #fff;
       margin-top: 20px;
       width: 100%;
-      max-width: 1400px;
+      max-width: 2000px;
+      height: auto;
     }
   </style>
 </head>
@@ -144,7 +145,7 @@
     <button onclick="drawDiagram()">Générer le diagramme</button>
     <button class="export-btn" onclick="exportDiagramPNG()">Exporter en PNG</button>
     <button class="export-btn" onclick="exportDiagramPDF()">Exporter en PDF</button>
-    <canvas id="fishboneCanvas" width="1600" height="1200"></canvas>
+    <canvas id="fishboneCanvas" width="2400" height="1500"></canvas>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -176,13 +177,13 @@
         "Milieu": parseCauses(document.getElementById('environment').value)
       };
 
-      const spineStartX = 150;
-      const spineEndX = 1450;
-      const spineY = 600;
-      const categorySpacing = 180;
-      const causeSpacing = 70;
-      const subCauseSpacing = 30;
-      const fontSize = 14;
+      const spineStartX = 200;
+      const spineEndX = 2200;
+      const spineY = 750;
+      const categorySpacing = 200;
+      const causeSpacing = 90;
+      const subCauseSpacing = 40;
+      const fontSize = 16;
       const colors = ['#FF5733', '#33B5FF', '#28A745', '#FFC107', '#9C27B0'];
 
       ctx.font = `${fontSize}px Arial`;
@@ -190,7 +191,7 @@
       ctx.fillStyle = '#000';
       ctx.textAlign = 'left';
       ctx.fillText(fncNumber, spineStartX, 40);
-      ctx.fillText(affairNumber, spineStartX, 60);
+      ctx.fillText(affairNumber, spineStartX, 65);
 
       ctx.beginPath();
       ctx.moveTo(spineStartX, spineY);
@@ -200,8 +201,8 @@
       ctx.fillText(mainCause, spineEndX + 10, spineY + 5);
 
       const categoryKeys = Object.keys(categories);
-      const xPositions = [300, 550, 800, 1050, 1300];
-      const offsets = [-categorySpacing * 1.5, categorySpacing * 1.3, -categorySpacing, categorySpacing, -categorySpacing / 1.2];
+      const xPositions = [450, 850, 1250, 1650, 2050];
+      const offsets = [-categorySpacing * 1.4, categorySpacing * 1.2, -categorySpacing, categorySpacing, -categorySpacing / 1.3];
 
       categoryKeys.forEach((category, i) => {
         const x = xPositions[i];
@@ -217,29 +218,29 @@
         ctx.stroke();
 
         ctx.textAlign = 'center';
-        ctx.fillText(category, x, baseY - (yOffset > 0 ? -25 : 25));
+        ctx.fillText(category, x, baseY - (yOffset > 0 ? -30 : 30));
 
         categories[category].forEach((cause, idx) => {
           const causeY = baseY + (yOffset > 0 ? causeSpacing * (idx + 1) : -causeSpacing * (idx + 1));
 
           ctx.beginPath();
           ctx.moveTo(x, baseY);
-          ctx.lineTo(x + 150, causeY);
+          ctx.lineTo(x + 180, causeY);
           ctx.stroke();
 
           ctx.textAlign = 'left';
-          ctx.fillText(cause.main, x + 160, causeY + 5);
+          ctx.fillText(cause.main, x + 190, causeY + 5);
 
           cause.subCauses.forEach((subCause, subIdx) => {
             const subY = causeY + subCauseSpacing * (subIdx + 1);
 
             ctx.beginPath();
-            ctx.moveTo(x + 150, causeY);
-            ctx.lineTo(x + 150, subY);
-            ctx.lineTo(x + 280, subY);
+            ctx.moveTo(x + 180, causeY);
+            ctx.lineTo(x + 180, subY);
+            ctx.lineTo(x + 340, subY);
             ctx.stroke();
 
-            ctx.fillText(subCause, x + 285, subY + 5);
+            ctx.fillText(subCause, x + 350, subY + 5);
           });
         });
       });
@@ -254,7 +255,7 @@
       });
     }
 
-    async function exportDiagramPDF() {
+    function exportDiagramPDF() {
       html2canvas(document.getElementById('fishboneCanvas')).then(canvasImage => {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('l', 'mm', 'a4');
