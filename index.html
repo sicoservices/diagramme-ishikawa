@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modèle Interactif - Diagramme d'Ishikawa (5M) Amélioré</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+    h1 { text-align: center; }
+    .diagram-container { display: flex; flex-direction: column; align-items: center; }
+    .input-container { 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 15px; 
+      width: 100%; 
+      max-width: 1000px; 
+      background-color: #fff; 
+      padding: 20px; 
+      border-radius: 10px; 
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+    }
+    label { font-weight: bold; }
+    textarea { 
+      width: 100%; 
+      height: 70px; 
+      border-radius: 5px; 
+      border: 1px solid #ccc; 
+      padding: 8px; 
+      resize: vertical; 
+    }
+    button { 
+      padding: 10px 20px; 
+      margin-top: 20px; 
+      cursor: pointer; 
+      background-color: #007BFF; 
+      color: white; 
+      border: none; 
+      border-radius: 5px; 
+      font-size: 16px; 
+    }
+    button:hover { background-color: #0056b3; }
+    canvas { 
+      border: 1px solid #ccc; 
+      margin-top: 30px; 
+      border-radius: 10px; 
+      background-color: #fff; 
+    }
+    .export-btn { 
+      background-color: #28a745; 
+      margin-top: 10px; 
+    }
+    .export-btn:hover { background-color: #218838; }
+  </style>
+</head>
+<body>
+  <h1>Modèle Interactif - Diagramme d'Ishikawa (5M) Amélioré</h1>
+  <p style="text-align:center;">Remplissez les champs ci-dessous. Utilisez le format "Cause principale: Sous-cause 1; Sous-cause 2". Les sous-branches apparaîtront verticalement sous les causes principales.</p>
+
+  <div class="diagram-container">
+    <div class="input-container">
+      <label for="mainCause">Problème principal :</label>
+      <textarea id="mainCause" placeholder="Ex. : Retard de livraison"></textarea>
+
+      <label for="man">Main-d'œuvre :</label>
+      <textarea id="man" placeholder="Ex. : Manque de formation: Pas de personnel; Absence de budget"></textarea>
+
+      <label for="methods">Méthodes :</label>
+      <textarea id="methods" placeholder="Ex. : Procédure obsolète: Pas de technicien; Pas de réunion d'animation"></textarea>
+
+      <label for="machines">Matériel :</label>
+      <textarea id="machines" placeholder="Ex. : Machine défectueuse: Pas de maintenance; Pas de responsable"></textarea>
+
+      <label for="materials">Matières :</label>
+      <textarea id="materials" placeholder="Ex. : Matières premières défectueuses: Pas de stock; Pas de documents"></textarea>
+
+      <label for="environment">Milieu :</label>
+      <textarea id="environment" placeholder="Ex. : Environnement bruyant: Pas de bouchons; Présence de soudeurs"></textarea>
+    </div>
+
+    <button onclick="drawDiagram()">Générer le diagramme</button>
+    <button class="export-btn" onclick="exportDiagram()">Exporter en PNG</button>
+    <canvas id="fishboneCanvas" width="1500" height="1000"></canvas>
+  </div>
+
+  <script>
+    function parseCauses(input) {
+      return input.split(',').map(entry => {
+        const [main, subs] = entry.split(':').map(item => item.trim());
+        const subCauses = subs ? subs.split(';').map(sub => sub.trim()) : [];
+        return { main, subCauses };
+      }).filter(cause => cause.main);
+    }
+
+    function drawDiagram() {
+      const canvas = document.getElementById('fishboneCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const mainCause = document.getElementById('mainCause').value || 'Problème';
+      const categories = {
+        "Main-d'œuvre": parseCauses(document.getElementById('man').value),
+        "Méthodes": parseCauses(document.getElementById('methods').value),
+        "Matériel": parseCauses(document.getElementById('machines').value),
+        "Matières": parseCauses(document.getElementById('materials').value),
+        "Milieu": parseCauses(document.getElementById('environment').value)
+      };
+
+      const spineStartX = 250;
+      const spineEndX = 1250;
+      const spineY = 500;
+      const categorySpacing = 160;
+      const causeSpacing = 60;
+      const subCauseSpacing = 30;
+      const fontSize = 14;
+      const colors = ['#FF5733', '#33B5FF', '#28A745', '#FFC107', '#9C27B0'];
+
+      ctx.font = `${fontSize}px Arial`;
+      ctx.lineWidth = 2;
+
+      // Colonne vertébrale principale
+      ctx.beginPath();
+      ctx.moveTo(spineStartX, spineY);
+      ctx.lineTo(spineEndX, spineY);
+      ctx.stroke();
+
+      ctx.fillText(mainCause, spineEndX + 10, spineY + 5);
+
+      const categoryKeys = Object.keys(categories);
+      const xPositions = [350, 550, 750, 950, 1150];
+      const offsets = [-categorySpacing * 1.5, categorySpacing * 1.5, -categorySpacing, categorySpacing, -categorySpacing / 1.2];
+
+      categoryKeys.forEach((category, i) => {
+        const x = xPositions[i];
+        const yOffset = offsets[i];
+        const baseY = spineY + yOffset;
+
+        ctx.strokeStyle = colors[i];
+        ctx.beginPath();
+        ctx.moveTo(x, spineY);
+        ctx.lineTo(x, baseY);
+        ctx.stroke();
+
+        ctx.fillStyle = colors[i];
+        ctx.textAlign = 'center';
+        ctx.fillText(category, x, baseY - (yOffset > 0 ? -20 : 20));
+
+        categories[category].forEach((cause, idx) => {
+          const causeY = baseY + (yOffset > 0 ? causeSpacing * (idx + 1) : -causeSpacing * (idx + 1));
+
+          ctx.beginPath();
+          ctx.moveTo(x, baseY);
+          ctx.lineTo(x + 150, causeY);
+          ctx.stroke();
+
+          ctx.textAlign = 'left';
+          ctx.fillText(cause.main, x + 155, causeY + 5);
+
+          cause.subCauses.forEach((subCause, subIdx) => {
+            const subY = causeY + (subCauseSpacing * (subIdx + 1));
+
+            ctx.beginPath();
+            ctx.moveTo(x + 150, causeY);
+            ctx.lineTo(x + 150, subY);
+            ctx.lineTo(x + 270, subY);
+            ctx.stroke();
+
+            ctx.fillText(subCause, x + 275, subY + 5);
+          });
+        });
+      });
+    }
+
+    function exportDiagram() {
+      const canvas = document.getElementById('fishboneCanvas');
+      const link = document.createElement('a');
+      link.download = 'diagramme_ishikawa.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
